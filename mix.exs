@@ -27,6 +27,8 @@ defmodule Botiful.MixProject do
       {:cowboy, "~> 2.4"},
       {:plug, "~> 1.6"},
       {:plug_cowboy, "~> 2.0"},
+      {:browser, "~> 0.4"},
+
       # Development reloading
       {:remix, "~> 0.0.1", only: :dev},
 
