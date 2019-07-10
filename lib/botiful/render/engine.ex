@@ -1,29 +1,35 @@
 defmodule Botiful.Render.Engine do
   use GenServer
 
+  alias ChromeRemoteInterface.{
+    RPC,
+    PageSession
+  }
+
+  require Logger
 
   def start_link(url) do
     GenServer.start_link(__MODULE__, url)
   end
 
-  def url(pid) do
-    GenServer.call(pid, :url)
-  end
-
-  def swap_url(pid, new_url) do 
-    GenServer.cast(pid, {:swap_url, new_url})
-  end
 
   # Server Callbacks
   def init(url) do
-    {:ok, %{url: url}}
-  end
+    conn = ChroxyClient.page_session!(%{ host: "localhost", port: 1330})
+   
+    
+    {:ok, _} = RPC.Page.enable(conn)
+    #{:ok, _} = RPC.Network.enable(conn)
 
-  def handle_call(:url, _from, state) do
-    {:reply, state.url, state}
-  end
+    :ok = PageSession.subscribe(conn, "Page.loadEventFired", self())
 
-  def handle_cast({:swap_url, new_url}, _state) do
-    {:noreply, %{url: new_url}}
+    {:ok, _} = RPC.Page.navigate(conn, %{url: url})
+    {:ok, %{conn: conn}}
+
+  end
+  def handle_info({:chrome_remote_interface, "Page.loadEventFired", data}, state) do
+    IO.inspect data
+    #Logger.info("data, #{data}")
+    {:noreply, state}
   end
 end
