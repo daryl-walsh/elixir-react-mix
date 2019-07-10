@@ -29,6 +29,8 @@ defmodule Botiful.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:browser, "~> 0.4"},
 
+      {:chroxy_client, "0.1.0"},
+      {:chrome_remote_interface, "0.1.0"},
       # Development reloading
       {:remix, "~> 0.0.1", only: :dev},
 
